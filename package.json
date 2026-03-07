@@ -1,0 +1,20 @@
+{
+  "name": "leitor",
+  "version": "1.0.0",
+  "description": "Um bot de discord que envia doujins uma vez por hora",
+  "main": "index.js",
+  "scripts": {
+    "main": "node ./index.js",
+    "register": "node ./register-commands.js",
+    "register-guild": "node ./register-commands-guild.js"
+  },
+  "keywords": [],
+  "author": "Akumu",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "discord.js": "^14.25.1",
+    "keyv": "^5.6.0",
+    "nhentai": "^4.0.0"
+  }
+}
