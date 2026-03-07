@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { thegreatflood } = require("./modules/GetDoujin_Embed.js");
+const { thegreatflood } = require("./modules/Doujin.js");
 const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
 const { Keyv } = require("keyv");
 

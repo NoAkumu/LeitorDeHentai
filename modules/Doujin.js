@@ -1,5 +1,5 @@
 const { Colors } = require("discord.js");
-const { SlashCommandBuilder, EmbedBuilder, resolveColor } = require("discord.js")
+const { EmbedBuilder } = require("discord.js")
 const nhentai = require("nhentai");
 const api = new nhentai.API();
 
