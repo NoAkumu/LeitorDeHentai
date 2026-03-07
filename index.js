@@ -17,17 +17,19 @@ client.once(Events.ClientReady, (readyClient) => {
 	const channels_to_flood = [
 		"1479631381687566418",
 	];
-	for (let i = 0; i < channels_to_flood.length; i++) {
-		const s_channel = readyClient.channels.cache.find(channel => channel.id === channels_to_flood[i]);
-		console.log(`Channel ${s_channel.id} is expecting to be flooded!`)
-		setInterval(async () => {
-			console.log("Hentai wave incoming...");
+	setInterval(async () => {
+		console.log("Hentai wave incoming...");
+		for (let i = 0; i < channels_to_flood.length; i++) {
+			const s_channel = readyClient.channels.cache.find(channel => channel.id === channels_to_flood[i]);
+			console.log(`Channel ${s_channel.id} is expecting to be flooded!`)
+			
 			const doujin = (await GetDoujin("*"))
-			if(!doujin) { console.log("Hentai wave stoped..."); s_channel.send("Couldn't find anything :("); return;}
+			if(!doujin) { console.log("Hentai wave stoped..."); s_channel.send("Couldn't find anything :("); continue;}
 			
 			s_channel.send({embeds: [CreateDoujinEmbed(doujin)]});
-		}, 10 * 1000);
-	}
+		}
+		
+	}, 10 * 1000);
 })
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isChatInputCommand()) return; 
