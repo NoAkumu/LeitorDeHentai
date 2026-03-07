@@ -7,12 +7,12 @@ const { Keyv } = require("keyv");
 const client = new Client({intents:[GatewayIntentBits.Guilds]});
 const { token } = require("./config.json");
 
-const keyv = new Keyv('sqlite:///home/akumu/Projects/JS/LeitorDeHentai/database.sqlite')
+
 
 client.once(Events.ClientReady, (readyClient) => {
     console.log(`Logged in as ${readyClient.user.tag}!`);
 	const channels_to_flood = [
-		"1479631381687566418",
+
 	];
 	for (let i = 0; i < channels_to_flood.length; i++) {
 		const s_channel = readyClient.channels.cache.find(channel => channel.id === channels_to_flood[i]);
