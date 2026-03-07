@@ -12,27 +12,35 @@ const { token, database_path } = require("./config.json");
 
 const keyv = new Keyv(`sqlite://${database_path}`);
 
+var Intervals = [];
+
 client.once(Events.ClientReady, (readyClient) => {
     console.log(`Logged in as ${readyClient.user.tag}!`);
-	const channels_to_flood = [];
+	
+	var channels_to_flood = [];
 	console.log("Preparing hentai wave...");
+	
 	for await (const [key, value] of keyv.iterator()){
 		console.log(`Channel ${key} ready!`);
-		channels_to_flood[key] = JSON.parse(value);
+		channels_to_flood.push(key);
 	}
 	console.log("Hentai wave ready...");
-	setInterval(async () => {
-		console.log("Hentai wave incoming...");
-		for (let i = 0; i < channels_to_flood.length; i++) {
-			const s_channel = readyClient.channels.cache.find(channel => channel.id === channels_to_flood[i]);
-			console.log(`Channel ${s_channel.id} is expecting to be flooded!`)
 
-			const doujin = (await GetDoujin("*"))
-			if(!doujin) { console.log("Hentai wave stoped..."); s_channel.send("Couldn't find anything :("); continue;}
-			
-			s_channel.send({embeds: [CreateDoujinEmbed(doujin)]});
+	for (let i = 0; i < channels_to_flood.length; i++) {
+		async () => {
+			const cooldown = await keyv.get(channels_to_flood[i]);
+			Intervals[channels_to_flood[i]] = 
+				setInterval(async () => {
+					const s_channel = readyClient.channels.cache.find(channel => channel.id === channels_to_flood[i]);
+					console.log(`Channel ${s_channel.id} is expecting to be flooded!`)
+
+					const doujin = (await GetDoujin("*"))
+					if(!doujin) { console.log("Hentai wave stoped..."); s_channel.send("Couldn't find anything :("); return;}
+					
+					s_channel.send({embeds: [CreateDoujinEmbed(doujin)]
+				});}, cooldown * 1000);
 		}
-	}, 60 * 1000);
+	}
 })
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (!interaction.isChatInputCommand()) return; 
