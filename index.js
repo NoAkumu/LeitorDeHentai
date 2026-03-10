@@ -2,36 +2,33 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { GetDoujin, CreateDoujinEmbed } = require("./modules/Doujin.js");
 const { Client, Collection, Events, GatewayIntentBits } = require("discord.js");
-const { Keyv, KeyvHooks } = require("keyv");
-const { default: KeyvSqlite } = require("@keyv/sqlite");
+const { KeyvHooks } = require("keyv");
 
 // Creates the discord bot client
 const client = new Client({intents:[GatewayIntentBits.Guilds]});
 
 // TODO: a shell script that automatically creates the config file 
-const { token, database_path } = require("./config.json");
+const { token } = require("./config.json");
+const { keyv } = require("./modules/Database.js");
+const test = require("node:test");
 
-
-export const keyv = new Keyv(new KeyvSqlite(`sqlite://${database_path}`));
 keyv.on('error', (err) => console.error('Keyv connection error:', err));
 
 var Intervals = [];
 
 function AddChannelToIntervals(data) {
-	console.log(data)
-
-	console.log(`Channel ${data.key} ready!`);
 	// Gets the cooldown for the timeout and the tag for the search
 	const data_obj = JSON.parse(data.value)
-	const cooldown = data_obj.time ?? 10;
-	const tag = data_obj.tag ?? "*";
+	const cooldown = data_obj.time;
+	const tag = data_obj.tag;
 
 	// Add channel to intervals cooldown
 	Intervals[data.key] = 
 		setInterval(async () => {
+			console.log("Test")
 			// Check if channel exists 
 			const s_channel = client.channels.cache.find(channel => channel.id === data.key);
-			if (!s_channel) {return}
+			if (!s_channel) {return console.log(`Channel ${data.key} doesn't exist!`)}
 			console.log(`Channel ${s_channel.id} is expecting to be flooded!`);
 			
 			// Get the doujin
@@ -41,6 +38,7 @@ function AddChannelToIntervals(data) {
 			// Sending the doujin embed to the channel
 			s_channel.send({embeds: [CreateDoujinEmbed(doujin)]});
 		}, cooldown * 1000);
+	console.log(`Channel ${data.key} ready!`);
 }
 
 keyv.hooks.addHandler(KeyvHooks.POST_SET, (data) => {
@@ -49,15 +47,17 @@ keyv.hooks.addHandler(KeyvHooks.POST_SET, (data) => {
 		Intervals[data.key] = null
 	}
 
+	
+	
 	console.log("Adding to the list...")
-	AddChannelToIntervals(data)
+	AddChannelToIntervals({key:data.key.replace("keyv:", ""), value:data.value})
 });
 
-keyv.hooks.addHandler(KeyvHooks.POST_DELETE, () => {
-	if (Intervals[data.key]) { 
-		console.log("Deleting from the list...")
-		clearInterval(Intervals[data.key]);
-		Intervals[data.key] = null;
+keyv.hooks.addHandler(KeyvHooks.POST_DELETE, (data) => {
+	const key = Intervals[data.key.replace("keyv:", "")]
+	if (key) { 
+		clearInterval(key);
+		Intervals[key] = null;
 	}
 });
 

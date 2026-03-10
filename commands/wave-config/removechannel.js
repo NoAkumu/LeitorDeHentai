@@ -1,10 +1,10 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { keyv } = require("./../../index.js")
+const { keyv } = require("./../../modules/Database")
 
 module.exports = {
     data : new SlashCommandBuilder()
             .setName('removechannel')
-            .setDescription('muda as propriedades de um canal ')
+            .setDescription('remove um canal de texto ')
             .addChannelOption((option) => option
                             .setName("channel")
                             .setDescription("canal de texto que vai receber os doujins")
@@ -22,7 +22,7 @@ module.exports = {
             
         }else{
             await keyv.delete(channel.id);
-            await interaction.editReply({content:`Channel ${channel.name} changed`, ephemeral:true});
+            await interaction.editReply({content:`Channel ${channel.name} removed`, ephemeral:true});
         }
     }
 }
