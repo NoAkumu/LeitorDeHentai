@@ -25,7 +25,6 @@ function AddChannelToIntervals(data) {
 	// Add channel to intervals cooldown
 	Intervals[data.key] = 
 		setInterval(async () => {
-			console.log("Test")
 			// Check if channel exists 
 			const s_channel = client.channels.cache.find(channel => channel.id === data.key);
 			if (!s_channel) {return console.log(`Channel ${data.key} doesn't exist!`)}
@@ -47,8 +46,6 @@ keyv.hooks.addHandler(KeyvHooks.POST_SET, (data) => {
 		Intervals[data.key] = null
 	}
 
-	
-	
 	console.log("Adding to the list...")
 	AddChannelToIntervals({key:data.key.replace("keyv:", ""), value:data.value})
 });
